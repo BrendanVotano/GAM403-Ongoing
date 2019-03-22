@@ -48,10 +48,28 @@ public class Player : MonoBehaviour
 
         Movement();
 
-        if (health != 100)
-            Debug.Log("Not at full health");
+        //if (health != 100)
+        //    Debug.Log("Not at full health");
 
     }
+
+
+    void FixedUpdate()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        { 
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, Vector3.forward, out hit, 100.0f))
+            {
+                print("Found a: " + hit.collider.name);
+                hit.collider.gameObject.GetComponent<Renderer>().material.color = Color.blue;
+            }
+
+            Debug.DrawRay(transform.position, Vector3.forward, Color.blue);
+        }
+    }
+
 
     void Movement()
     {
@@ -70,4 +88,37 @@ public class Player : MonoBehaviour
     {
         health += healthModifier;
     }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Poison"))
+        {
+            GetComponent<Renderer>().material.color = Color.magenta;
+        }
+        if (other.gameObject.CompareTag("Health"))
+        {
+            GetComponent<Renderer>().material.color = Color.green;
+        }
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Poison"))
+        {
+            health -= 1;
+        }
+        if (other.gameObject.CompareTag("Health"))
+        {
+            health += 1;
+        }
+    }
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        GetComponent<Renderer>().material.color = Color.white;
+    }
+
 }
